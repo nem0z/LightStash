@@ -21,23 +21,15 @@ func hash160(payload []byte) ([]byte, error) {
 	return hasher.Sum(nil), nil
 }
 
-func (wallet *Wallet) P2PKH(mainet bool) (string, error) {
-	hash160, err := hash160(wallet.Public)
+func (wallet *Wallet) P2PKH() (string, error) {
+	hash160, err := hash160(wallet.PubKey())
 	if err != nil {
 		return "", err
 	}
 
-	checksum := utils.Checksum(hash160)
+	pubKeyHash := utils.Prepend(hash160, address.P2PKHPrefix)
+	checksum := utils.Checksum(pubKeyHash)
 
-	prefix := address.LitecoinP2PKHTestnetPrefix
-	if mainet {
-		prefix = address.LitecoinP2PKHMainnetPrefix
-	}
-
-	data := []byte{}
-	data = append(data, prefix)
-	data = append(data, hash160...)
-	data = append(data, checksum...)
-
-	return base58.Encode(data), nil
+	return base58.Encode(append(pubKeyHash, checksum...)), nil
+}
 }
