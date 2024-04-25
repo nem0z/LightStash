@@ -32,4 +32,18 @@ func (wallet *Wallet) P2PKH() (string, error) {
 
 	return base58.Encode(append(pubKeyHash, checksum...)), nil
 }
+
+func (wallet *Wallet) Bench32() (string, error) {
+	hash160, err := hash160(wallet.PubKey())
+	if err != nil {
+		return "", err
+	}
+
+	witnessProgram, err := bech32.ConvertBits(hash160, 8, 5, true)
+	if err != nil {
+		return "", err
+	}
+
+	witnessProgram = utils.Prepend(witnessProgram, address.WitnessVersion)
+	return bech32.Encode(address.Bench32Prefix, witnessProgram)
 }
