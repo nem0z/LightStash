@@ -8,11 +8,11 @@ import (
 	"encoding/pem"
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 type Wallet struct {
-	private *ecdsa.PrivateKey
-	Public  []byte
+	pkey *ecdsa.PrivateKey
 }
 
 func New() (*Wallet, error) {
@@ -21,14 +21,11 @@ func New() (*Wallet, error) {
 		return nil, err
 	}
 
-	pubKey := append(pKey.PublicKey.X.Bytes(), pKey.PublicKey.Y.Bytes()...)
-
-	return &Wallet{pKey, pubKey}, nil
+	return &Wallet{pKey}, nil
 }
 
-func NewFromKey(pKey *ecdsa.PrivateKey) (*Wallet, error) {
-	pubKey := append(pKey.PublicKey.X.Bytes(), pKey.PublicKey.Y.Bytes()...)
-	return &Wallet{pKey, pubKey}, nil
+func (wallet *Wallet) PubKey() []byte {
+	return append(wallet.pkey.PublicKey.X.Bytes(), wallet.pkey.PublicKey.Y.Bytes()...)
 }
 
 func (wallet *Wallet) Export(path string) error {
@@ -43,7 +40,7 @@ func (wallet *Wallet) Export(path string) error {
 	}
 	defer file.Close()
 
-	encodedPKey, err := x509.MarshalECPrivateKey(wallet.private)
+	encodedPKey, err := x509.MarshalECPrivateKey(wallet.pkey)
 	if err != nil {
 		return err
 	}
@@ -52,7 +49,6 @@ func (wallet *Wallet) Export(path string) error {
 		Type:  "EC PRIVATE KEY",
 		Bytes: encodedPKey,
 	}
-
 	return pem.Encode(file, pKeyPEM)
 }
 
@@ -72,5 +68,5 @@ func Load(path string) (*Wallet, error) {
 		return nil, err
 	}
 
-	return NewFromKey(pKey)
+	return &Wallet{pKey}, nil
 }
