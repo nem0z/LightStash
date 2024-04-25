@@ -1,4 +1,5 @@
 package address
 
-const LitecoinP2PKHMainnetPrefix byte = 0x30
-const LitecoinP2PKHTestnetPrefix byte = 0x6F
+const P2PKHPrefix byte = 0x00
+const WitnessVersion byte = 0x00
+const Bench32Prefix string = "bc"
