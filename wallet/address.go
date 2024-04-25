@@ -4,6 +4,7 @@ import (
 	"crypto/sha256"
 
 	"github.com/ltcsuite/ltcd/ltcutil/base58"
+	"github.com/ltcsuite/ltcd/ltcutil/bech32"
 	"github.com/nem0z/LightStash/utils"
 	"github.com/nem0z/LightStash/wallet/address"
 	"golang.org/x/crypto/ripemd160"
