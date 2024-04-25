@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"log"
 
@@ -18,11 +17,6 @@ func main() {
 	w, err := wallet.New()
 	handle(err)
 
-	handle(w.Export("tmp/test.pem"))
-
-	newWallet, err := wallet.Load("tmp/test.pem")
-	handle(err)
-
-	fmt.Println(bytes.Equal(w.Public, newWallet.Public))
-	fmt.Println(w.P2PKH(true))
+	fmt.Println(w.P2PKH())
+	fmt.Println(w.Bench32())
 }
