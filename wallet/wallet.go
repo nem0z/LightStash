@@ -32,6 +32,11 @@ func NewFromKey(pKey *ecdsa.PrivateKey) (*Wallet, error) {
 }
 
 func (wallet *Wallet) Export(path string) error {
+	err := os.MkdirAll(filepath.Dir(path), os.ModePerm)
+	if err != nil {
+		return err
+	}
+
 	file, err := os.Create(path)
 	if err != nil {
 		return err
